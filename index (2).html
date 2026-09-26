@@ -1,0 +1,527 @@
+<!doctype html>
+<html lang="ja">
+<head>
+<meta charset="UTF-8" />
+<meta name="viewport" content="width=device-width, initial-scale=1.0" />
+<meta name="theme-color" content="#101318" />
+<title>寄附</title>
+<style>
+:root {
+  color-scheme: light;
+  --ink: #16191f;
+  --muted: #68707d;
+  --paper: #ffffff;
+  --soft: #f2f5f8;
+  --line: #dfe4ea;
+  --red: #e60012;
+  --teal: #00a89d;
+  --gold: #f5b21b;
+  --shadow: 0 18px 48px rgba(20, 26, 36, .16);
+}
+
+* { box-sizing: border-box; }
+
+html { min-height: 100%; background: #eef2f6; }
+
+body {
+  min-width: 320px;
+  min-height: 100vh;
+  margin: 0;
+  color: var(--ink);
+  background: #eef2f6;
+  font-family: Inter, ui-sans-serif, system-ui, -apple-system, BlinkMacSystemFont, "Segoe UI", sans-serif;
+}
+
+button, input { font: inherit; }
+button { border: 0; cursor: pointer; }
+
+.site-header {
+  position: sticky;
+  top: 0;
+  z-index: 10;
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: 14px;
+  min-height: 72px;
+  padding: 10px max(18px, calc((100vw - 1180px) / 2));
+  border-bottom: 1px solid rgba(255, 255, 255, .76);
+  background: rgba(246, 248, 251, .92);
+  backdrop-filter: blur(16px);
+}
+
+.brand { color: inherit; text-decoration: none; display: inline-flex; align-items: center; min-width: 210px; gap: 10px; font-weight: 950; }
+
+.brand span {
+  display: grid;
+  place-items: center;
+  width: 42px;
+  height: 42px;
+  border-radius: 8px;
+  color: #fff;
+  background: var(--red);
+  box-shadow: 0 10px 22px rgba(230, 0, 18, .22);
+}
+
+.section-head p {
+  margin: 0;
+  color: var(--muted);
+  font-size: 12px;
+  font-weight: 950;
+  text-transform: uppercase;
+}
+
+main { display: grid; gap: 26px; }
+
+.hero {
+  position: relative;
+  display: grid;
+  min-height: min(46vh, 420px);
+  overflow: hidden;
+  align-items: end;
+  padding: 42px max(18px, calc((100vw - 1180px) / 2));
+  color: #fff;
+  background: linear-gradient(135deg, #1a1030 0%, #2c0f24 46%, #111821 100%);
+}
+
+.hero-copy { position: relative; z-index: 1; display: grid; width: min(620px, 100%); gap: 9px; }
+
+.hero-copy p { margin: 0; color: #9ff3ee; font-size: 13px; font-weight: 950; text-transform: uppercase; }
+
+.hero-copy h1 { margin: 0; font-size: clamp(38px, 7vw, 72px); line-height: .98; }
+
+.hero-copy span { width: min(480px, 100%); color: rgba(255, 255, 255, .88); font-size: 17px; font-weight: 850; line-height: 1.45; }
+
+.donate-section {
+  display: grid;
+  width: min(1180px, calc(100vw - 36px));
+  gap: 14px;
+  margin: 0 auto 42px;
+}
+
+.section-head { display: flex; align-items: end; justify-content: space-between; gap: 12px; }
+
+.section-head h2 { margin: 2px 0 0; font-size: 28px; line-height: 1; }
+
+#shop-status {
+  min-height: 34px;
+  max-width: min(520px, 56vw);
+  overflow: hidden;
+  padding: 9px 12px;
+  border-radius: 8px;
+  color: var(--muted);
+  background: #fff;
+  box-shadow: 0 8px 22px rgba(20, 26, 36, .08);
+  font-size: 13px;
+  font-weight: 900;
+  text-overflow: ellipsis;
+  white-space: nowrap;
+}
+
+#shop-status.ready { color: #007a72; background: #e8fbf8; }
+#shop-status.error { color: var(--red); background: #fff0f1; }
+
+.donate-grid { display: grid; grid-template-columns: repeat(3, minmax(0, 1fr)); gap: 14px; }
+
+.donate-card {
+  display: grid;
+  gap: 10px;
+  min-width: 0;
+  padding: 20px;
+  border: 1px solid rgba(255, 255, 255, .82);
+  border-radius: 8px;
+  background: #fff;
+  box-shadow: 0 12px 30px rgba(20, 26, 36, .1);
+}
+
+.donate-card-top { display: flex; align-items: baseline; justify-content: space-between; gap: 10px; }
+.donate-card-top small { color: var(--muted); font-size: 12px; font-weight: 950; text-transform: uppercase; }
+.donate-card-top strong { font-size: 28px; }
+
+.donate-card p { margin: 0; min-height: 40px; color: var(--muted); font-size: 14px; font-weight: 760; line-height: 1.45; }
+
+.donate-card button { min-height: 42px; padding: 0 14px; border-radius: 8px; color: #fff; background: #2c0f24; font-weight: 950; }
+.donate-card.medium button { background: var(--red); }
+.donate-card.large button { background: var(--gold); color: #16191f; }
+.donate-card button:disabled { cursor: progress; opacity: .62; }
+
+.donate-custom {
+  display: grid;
+  grid-template-columns: 1fr auto;
+  align-items: center;
+  gap: 16px;
+  padding: 20px;
+  border: 1px solid rgba(255, 255, 255, .82);
+  border-radius: 8px;
+  background: var(--soft);
+}
+
+.donate-custom-copy { display: grid; gap: 4px; min-width: 0; }
+.donate-custom-copy small { color: var(--muted); font-size: 12px; font-weight: 950; text-transform: uppercase; }
+.donate-custom-copy h3 { margin: 0; font-size: 20px; }
+.donate-custom-copy p { margin: 0; color: var(--muted); font-size: 14px; font-weight: 760; }
+
+.donate-custom-form { display: flex; align-items: center; gap: 8px; }
+
+.custom-amount-field {
+  display: flex;
+  align-items: center;
+  gap: 4px;
+  height: 42px;
+  padding: 0 12px;
+  border: 1px solid var(--line);
+  border-radius: 8px;
+  background: #fff;
+  font-weight: 900;
+}
+
+.custom-amount-field span { color: var(--muted); }
+.custom-amount-field input { width: 120px; border: 0; outline: 0; font-weight: 900; }
+
+.donate-custom-form button { min-height: 42px; padding: 0 18px; border-radius: 8px; color: #fff; background: var(--red); font-weight: 950; }
+.donate-custom-form button:disabled { cursor: progress; opacity: .62; }
+
+.result-shell { min-height: calc(100vh - 72px); display: grid; place-items: center; padding: 24px; }
+
+.result-panel {
+  display: grid;
+  justify-items: center;
+  width: min(480px, 100%);
+  gap: 10px;
+  padding: 28px;
+  border: 1px solid rgba(255, 255, 255, .82);
+  border-radius: 8px;
+  background: #fff;
+  box-shadow: var(--shadow);
+}
+
+.result-icon {
+  display: grid;
+  place-items: center;
+  width: 56px;
+  height: 56px;
+  border-radius: 8px;
+  color: #fff;
+  background: #8f9298;
+  font-size: 22px;
+}
+
+.result-panel.paid .result-icon { background: var(--teal); box-shadow: 0 10px 22px rgba(0, 168, 157, .22); }
+
+.result-panel p { margin: 0; color: var(--muted); font-size: 12px; font-weight: 950; text-transform: uppercase; }
+.result-panel h1 { margin: 0; text-align: center; font-size: 30px; }
+.result-panel > span { color: var(--muted); text-align: center; font-weight: 800; }
+
+#result-details { display: grid; width: 100%; gap: 8px; margin: 8px 0; }
+#result-details div { display: flex; justify-content: space-between; gap: 12px; min-width: 0; padding: 10px 12px; border-radius: 8px; background: var(--soft); }
+#result-details dt, #result-details dd { margin: 0; min-width: 0; font-weight: 900; }
+#result-details dt { color: var(--muted); }
+#result-details dd { overflow: hidden; text-overflow: ellipsis; white-space: nowrap; }
+
+.primary-link {
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  min-height: 38px;
+  padding: 0 14px;
+  border-radius: 8px;
+  color: #fff;
+  background: var(--red);
+  font-weight: 950;
+  text-decoration: none;
+}
+
+[hidden] { display: none !important; }
+
+@media (max-width: 900px) {
+  .site-header { position: static; display: grid; align-items: stretch; }
+  .donate-grid { grid-template-columns: 1fr; }
+  .donate-custom { grid-template-columns: 1fr; }
+  .donate-custom-form { flex-wrap: wrap; }
+  .section-head { align-items: stretch; flex-direction: column; }
+  #shop-status { max-width: 100%; }
+  .hero { min-height: 360px; padding-top: 72px; }
+}
+</style>
+</head>
+<body>
+
+<header class="site-header">
+  <a class="brand" href="#" aria-label="寄附">
+    <span>&#9829;</span>
+    <strong>寄附</strong>
+  </a>
+</header>
+
+<main>
+
+  <section id="donate-view">
+    <section class="hero">
+      <div class="hero-copy">
+        <p>Support Us</p>
+        <h1>活動を応援してください</h1>
+        <span>いただいた寄附は、活動の継続と運営費に大切に使わせていただきます。KaroPayで安全にお支払いいただけます。</span>
+      </div>
+    </section>
+
+    <section class="donate-section" aria-label="寄附金額の選択">
+      <div class="section-head">
+        <div>
+          <p>Choose Amount</p>
+          <h2>寄附金額を選ぶ</h2>
+        </div>
+        <output id="shop-status">設定を保存してください</output>
+      </div>
+
+      <div class="donate-grid" id="donate-grid"></div>
+
+      <div class="donate-custom">
+        <div class="donate-custom-copy">
+          <small>Custom Amount</small>
+          <h3>金額を指定する</h3>
+          <p>お好きな金額でご支援いただけます。</p>
+        </div>
+        <form class="donate-custom-form" id="custom-form">
+          <label class="custom-amount-field">
+            <span>$</span>
+            <input type="number" id="custom-amount" name="customAmount" min="1" step="1" placeholder="金額を入力" inputmode="numeric" />
+          </label>
+          <button type="submit" id="custom-submit">寄附する</button>
+        </form>
+      </div>
+    </section>
+  </section>
+
+  <section id="result-view" class="result-shell" hidden>
+    <div class="result-panel" id="result-panel">
+      <div class="result-icon">&#9829;</div>
+      <p>Checking</p>
+      <h1>支払い確認中</h1>
+      <span id="result-message">KaroPayの取引状態を確認しています</span>
+      <dl id="result-details"></dl>
+      <a class="primary-link" href="#" id="result-back">戻る</a>
+    </div>
+  </section>
+
+</main>
+
+<template id="donate-card-template">
+  <article class="donate-card">
+    <div class="donate-card-top">
+      <small></small>
+      <strong></strong>
+    </div>
+    <p></p>
+    <button type="button">この金額を寄附する</button>
+  </article>
+</template>
+
+<script>
+(function () {
+  const presetAmounts = [
+    { id: 'support-small', tier: 'small', label: 'ライトサポーター', amount: 5, description: '気軽に応援したい方向けの寄附です。' },
+    { id: 'support-medium', tier: 'medium', label: 'レギュラーサポーター', amount: 15, description: '継続的な活動をしっかり支える寄附です。' },
+    { id: 'support-large', tier: 'large', label: 'スペシャルサポーター', amount: 40, description: '大きな後押しになる寄附です。心より感謝します。' }
+  ];
+
+  // このサイトの受取設定（あなたのKaroPayアカウントに固定）
+  const API_BASE = 'https://karopay.karon.jp';
+  const RECEIVE_CODE = 'RqZeQQq1Pq7oejv-RBDa5scF';
+
+  const statusOutput = document.getElementById('shop-status');
+  const donateGrid = document.getElementById('donate-grid');
+  const template = document.getElementById('donate-card-template');
+  const customForm = document.getElementById('custom-form');
+  const customAmountInput = document.getElementById('custom-amount');
+  const customSubmit = document.getElementById('custom-submit');
+
+  const donateView = document.getElementById('donate-view');
+  const resultView = document.getElementById('result-view');
+  const resultPanel = document.getElementById('result-panel');
+  const resultMessage = document.getElementById('result-message');
+  const resultDetails = document.getElementById('result-details');
+  const resultBack = document.getElementById('result-back');
+
+  customForm.addEventListener('submit', function (event) {
+    event.preventDefault();
+    const amount = Number(customAmountInput.value);
+    if (!amount || amount <= 0) {
+      updateStatus('金額を入力してください', 'error');
+      customAmountInput.focus();
+      return;
+    }
+    donate({ id: 'custom-donation', label: 'ご指定額のご寄附', amount: amount }, customSubmit);
+  });
+
+  resultBack.addEventListener('click', function (event) {
+    event.preventDefault();
+    const url = new URL(location.href);
+    url.search = '';
+    location.href = url.toString();
+  });
+
+  presetAmounts.forEach(function (preset) {
+    donateGrid.appendChild(renderCard(preset));
+  });
+
+  const params = new URLSearchParams(location.search);
+  const sessionId = params.get('checkout_session_id');
+
+  if (sessionId) {
+    donateView.hidden = true;
+    resultView.hidden = false;
+    verifyPayment(sessionId);
+  } else {
+    updateStatus();
+  }
+
+  function renderCard(preset) {
+    const node = template.content.cloneNode(true);
+    const card = node.querySelector('.donate-card');
+    const small = node.querySelector('small');
+    const amountEl = node.querySelector('strong');
+    const description = node.querySelector('p');
+    const button = node.querySelector('button');
+
+    card.classList.add(preset.tier);
+    small.textContent = preset.label;
+    amountEl.textContent = '$' + preset.amount.toLocaleString('en-US');
+    description.textContent = preset.description;
+    button.addEventListener('click', function () { donate(preset, button); });
+
+    return node;
+  }
+
+  function updateStatus(message, tone) {
+    statusOutput.className = tone || '';
+    statusOutput.textContent = message || 'KaroPay Checkoutに接続できます';
+  }
+
+  function donate(item, button) {
+    const originalText = button.textContent;
+    button.disabled = true;
+    button.textContent = '作成中';
+    updateStatus(item.label + ' の支払いページを作成中', 'ready');
+
+    const baseUrl = new URL(location.href);
+    baseUrl.search = '';
+
+    fetch(API_BASE + '/api/checkout/public/sessions', {
+      method: 'POST',
+      headers: { 'Content-Type': 'application/json' },
+      body: JSON.stringify({
+        receiveCode: RECEIVE_CODE,
+        amount: item.amount,
+        description: item.label,
+        clientReferenceId: item.id + '-' + Date.now(),
+        successUrl: baseUrl.toString(),
+        cancelUrl: baseUrl.toString()
+      })
+    })
+      .then(function (response) {
+        return response.json().then(function (data) {
+          return { response: response, data: data };
+        });
+      })
+      .then(function (result) {
+        if (!result.response.ok || !result.data.ok) {
+          throw new Error(result.data.error || 'CHECKOUT_FAILED');
+        }
+        safeSet('sampleShop.lastProduct', JSON.stringify({ name: item.label, amount: item.amount }), true);
+        location.href = result.data.url;
+      })
+      .catch(function (error) {
+        updateStatus(errorMessage(error.message), 'error');
+        button.disabled = false;
+        button.textContent = originalText;
+      });
+  }
+
+  function verifyPayment(sessionId) {
+    const product = readProduct();
+
+    fetch(API_BASE + '/api/checkout/public/sessions/' + encodeURIComponent(sessionId))
+      .then(function (response) {
+        return response.json().then(function (data) {
+          return { response: response, data: data };
+        });
+      })
+      .then(function (result) {
+        if (!result.response.ok || !result.data.ok) {
+          throw new Error(result.data.error || 'VERIFY_FAILED');
+        }
+        const session = result.data.checkoutSession;
+        const expectedAmount = product ? product.amount : null;
+        const amountMatches = !expectedAmount || Number(session.amount) === Number(expectedAmount);
+
+        if (session.status === 'paid' && amountMatches) {
+          showResult('paid', '寄附ありがとうございます', [
+            ['プラン', (product && product.name) || session.description || 'ご寄附'],
+            ['金額', '$' + Number(session.amount || 0).toLocaleString('en-US')],
+            ['取引', session.id]
+          ]);
+          return;
+        }
+
+        showResult('failed', '支払いを確認できません', [
+          ['状態', session.status],
+          ['金額', '$' + Number(session.amount || 0).toLocaleString('en-US')],
+          ['取引', session.id]
+        ]);
+      })
+      .catch(function () {
+        showResult('failed', 'KaroPayへ接続できませんでした', []);
+      });
+  }
+
+  function showResult(state, text, rows) {
+    resultPanel.classList.remove('paid', 'failed');
+    resultPanel.classList.add(state);
+    resultPanel.querySelector('p').textContent = state === 'paid' ? 'Complete' : 'Pending';
+    resultPanel.querySelector('h1').textContent = state === 'paid' ? '支払い完了' : '確認できません';
+    resultMessage.textContent = text;
+    resultDetails.replaceChildren();
+
+    rows.forEach(function (pair) {
+      const row = document.createElement('div');
+      const term = document.createElement('dt');
+      const description = document.createElement('dd');
+      term.textContent = pair[0];
+      description.textContent = pair[1];
+      row.append(term, description);
+      resultDetails.append(row);
+    });
+  }
+
+  function readProduct() {
+    try {
+      return JSON.parse(safeGet('sampleShop.lastProduct', true) || 'null');
+    } catch (e) {
+      return null;
+    }
+  }
+
+  function errorMessage(error) {
+    if (error === 'CODE_NOT_FOUND') return 'サイト用コードが無効です';
+    if (error === 'INVALID_AMOUNT') return '金額が無効です';
+    if (error === 'RATE_LIMITED') return '少し待ってからもう一度試してください';
+    return '支払いページを作成できませんでした';
+  }
+
+  function safeGet(key, session) {
+    try {
+      return (session ? sessionStorage : localStorage).getItem(key);
+    } catch (e) {
+      return null;
+    }
+  }
+
+  function safeSet(key, value, session) {
+    try {
+      (session ? sessionStorage : localStorage).setItem(key, value);
+    } catch (e) {}
+  }
+})();
+</script>
+</body>
+</html>
